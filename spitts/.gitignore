@@ -1,0 +1,11 @@
+asset/
+bin/
+build/
+include/
+lib/
+target/
+.cache/
+.vscode/
+.idea/
+.gradle/
+*.exe

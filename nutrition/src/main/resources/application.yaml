@@ -1,0 +1,13 @@
+spring:
+    datasource:
+        driver-class-name: org.postgresql.Driver
+        url: jdbc:postgresql://47.115.204.42:5432/nutrition
+        username: root
+        password: Hell0-w0rld
+        type: com.alibaba.druid.pool.DruidDataSource
+    web.resources:
+        static-locations:  classpath:/META-INF/resources/, classpath:/resources/, classpath:/static/, classpath:/public/, classpath:/templates/, classpath:/
+
+server:
+    servlet:
+        context-path: /nutrition
