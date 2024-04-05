@@ -38,7 +38,7 @@ Window::Window()
     glfwSetCursorPosCallback(this->window, cursorPosCallback);
 
     widget=new Widget(window, director);
-    createGlShader(PROJECT_PATH "/shaders/main.vs", PROJECT_PATH "/shaders/main.fs");
+    createGlShader(PROJECT_PATH "/shaders/main.vert", PROJECT_PATH "/shaders/main.frag");
 }
 
 Window::~Window()
