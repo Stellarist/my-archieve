@@ -89,5 +89,3 @@ auto operator<<(std::ostream& out, const UFSet<T>& rhs) -> std::ostream&
     out<<'\n';
     return out;
 }
-
-#endif

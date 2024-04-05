@@ -200,4 +200,3 @@ auto operator<<(std::ostream& out, const Tree<T>& rhs) -> std::ostream&
     print(rhs, rhs.root);
     return out;
 }
-

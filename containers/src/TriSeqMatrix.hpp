@@ -1,14 +1,19 @@
 #pragma once
 
-#include "TriPair.h"
 #include <iostream>
 #include <iomanip>
-using std::cout, std::endl, std::ostream;
 
-template <typename T> class TriPair;
-template <typename T> class TriSeqMatrix;
-template <typename T> ostream& operator<<(ostream&, const TriSeqMatrix<T>&);
-template <typename T> TriSeqMatrix<T> operator+(const TriSeqMatrix<T>&, const TriSeqMatrix<T>&);
+template <typename T>
+struct TriPair{
+    int row, col;
+    T value;
+    TriPair()=default;
+    TriPair(int m, int n, const T& new_value)
+        : row(m), col(n), value(new_value) {}
+    ~TriPair()=default;
+    TriPair& operator=(const TriPair&)=default;
+    int compareLocation(const TriPair& rhs);
+};
 
 template <typename T>
 class TriSeqMatrix{
@@ -160,10 +165,8 @@ auto TriSeqMatrix<T>::fastTranspose() -> TriSeqMatrix
 }
 
 template <typename T>
-ostream& operator<<(ostream& out, const TriSeqMatrix<T>& rhs)
+std::ostream& operator<<(std::ostream& out, const TriSeqMatrix<T>& rhs)
 {
-    // for(int i=0; i<rhs.num; i++)
-    //     out<<rhs.matrix[i]<<endl;
     T** mat=new T*[rhs.rows]();
     for(int i=0; i<rhs.rows; i++)
         *(mat+i)=new T[rhs.cols]();
@@ -224,4 +227,3 @@ auto operator+(const TriSeqMatrix<T>& lhs,const TriSeqMatrix<T>& rhs) -> TriSeqM
     temp.num=k;
     return temp;
 }
-

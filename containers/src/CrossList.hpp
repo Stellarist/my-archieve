@@ -3,12 +3,6 @@
 #include <iostream>
 #include <algorithm>
 
-template <typename T> struct Tripair;
-template <typename T> struct CNode;
-template <typename T> class CrossList;
-template <typename T> CrossList<T> operator+(const CrossList<T>&, const CrossList<T>&);
-template <typename T> std::ostream& operator<<(std::ostream&, const CrossList<T>&);
-
 template <typename T>
 struct Tripair{
     int row, col;
@@ -248,4 +242,3 @@ std::ostream& operator<<(std::ostream& out, const CrossList<T>& rhs)
     }
     return out;
 }
-

@@ -1,14 +1,8 @@
 #pragma once
 
 #include <iostream>
+#include <vector>
 #include <stack>
-
-template <typename T> struct BNode;
-template <typename T> struct CrossList;
-template <typename T> class BSTree;
-template <typename T> void print(const BSTree<T>&, BNode<T>*);
-template <typename T> std::vector<int> rowleaf(BNode<T>*);
-template <typename T> std::ostream& operator<<(std::ostream&, const BSTree<T>&);
 
 template <typename  T>
 struct BNode{

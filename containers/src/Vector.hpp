@@ -1,102 +1,146 @@
 #pragma once
 
-template <typename T> class Vector;
+#include <cstddef>
+#include <cassert>
+#include <stdexcept>
+#include <algorithm>
 
-template <typename T>
-class Vector{
-private:
-    using reference = T&;
-    using const_reference = const T&;
-
+template<typename T>
+class Vector {
 public:
-    // can be used as Vector<T>::(const_)iterator
-    // out of class (T should be replaced)
-    using iterator = T*;
-    using const_iterator = const T*;
+    using value_type             = T;
+    using size_type              = size_t;
+    using difference_type        = ptrdiff_t;
+    using pointer                = value_type*;
+    using const_pointer          = const value_type*;
+    using reference              = value_type&;
+    using const_reference        = const value_type&;
+    using iterator               = value_type*;
+    using const_iterator         = const value_type*;
+    using reverse_iterator       = std::reverse_iterator<iterator>;
+    using const_reverse_iterator = std::reverse_iterator<const_iterator>;
+
+    Vector();
+    Vector(size_type n);
+    Vector(size_type n, const_reference value);
+    Vector(const Vector<T>&);
+    template<typename InputIt>
+    Vector(InputIt first, InputIt last);
+    Vector(iterator, iterator);
+    Vector(Vector<T>&&);
+    Vector(std::initializer_list<T>);
+    Vector& operator=(const Vector<T>&);
+    Vector& operator=(Vector<T>&&);
+    ~Vector();
+
+    reference at(size_type pos)
+        {if(pos>=size()) throw std::range_error("Vector out of range.");
+        return *(start+pos);}
+
+    const_reference at(size_type pos) const
+        {if(pos>=size()) throw std::range_error("Vector out of range.");
+        return *(start+pos);}
+
+    reference operator[](size_type pos) 
+        {return *(start+pos);}
+
+    const_reference operator[] (size_type pos) const
+        {return *(start+pos);}
+
+    pointer data()
+        {return start;}
+    
+    const_pointer data() const
+        {return start;}
+
+    reference front()
+        {assert(!empty() && "Vector::front() called on an empty Vector");
+        return *start;}
+
+    const_reference front() const
+        {assert(!empty() && "Vector::front() called on an empty Vector");
+        return *start;}
+
+    reference back()
+        {assert(!empty() && "Vector::back() called on an empty Vector");
+        return *(finish-1);}
+
+    const_reference back() const
+        {assert(!empty() && "Vector::front() called on an empty Vector");
+        return *(finish-1);}
+
+    iterator begin()
+        {return start;}
+
+    const_iterator begin() const
+        {return start;}
+    
+    const_iterator cbegin() const
+        {return start;}
+
+    iterator end()
+        {return finish;}
+
+    const_iterator end() const
+        {return finish;}
+
+    const_iterator cend() const
+        {return finish;}
+
+    reverse_iterator rbegin()
+        {return reverse_iterator(finish);}
+    
+    const_reverse_iterator rbegin() const
+        {return const_reverse_iterator(finish);}
+    
+    const_reverse_iterator crbegin() const
+        {return const_reverse_iterator(finish);}
+    
+    reverse_iterator rend()
+        {return reverse_iterator(start);}
+    
+    const_reverse_iterator rend() const
+        {return const_reverse_iterator(start);}
+
+    const_reverse_iterator crend() const
+        {return const_reverse_iterator(start);}
+    
+    bool empty() const
+        {return start==finish;}
+
+    size_type size() const
+        {return static_cast<size_type>(finish-start);}
+    
+    size_type capacity() const
+        {return static_cast<size_type>(end_of_storage-start);}
+
+    iterator insert(const_iterator, const_reference);
+    iterator insert(const_iterator, value_type&&);
+    iterator insert(const_iterator, size_type, const_reference);
+    template <typename InputIt>
+    iterator insert(const_iterator, InputIt, InputIt);
+    iterator insert(const_iterator, std::initializer_list<T>);
+    iterator erase(const_iterator);
+    iterator erase(const_iterator, const_iterator);
+    void push_back(const_reference);
+    void push_back(value_type&&);
+    void pop_back();
+    void clear();
+    void swap(Vector<T>&);
+    void resize(size_type);
+    void reserve(size_type);
+    void shrink_to_fit();
 
 private:
     iterator start;
     iterator finish;
     iterator end_of_storage;
-
-public:
-    // Ctor, dtor and assignment
-    Vector();
-    Vector(int n);
-    Vector(int n, const T& value);
-    Vector(const Vector<T>&);
-    Vector(T*, T*);
-    Vector& operator=(const Vector<T>&);
-    ~Vector();
-
-    // Element access
-    reference at(unsigned pos)
-        {if(pos>=0 && pos<size()) return (*this)[pos];
-        else throw("out of range");}
-    const_reference at(unsigned pos) const
-        {if(pos>=0 && pos<size()) return (*this)[pos];
-        else throw("out of range");}
-    reference operator[](unsigned pos)
-        {return *(start+pos);}
-    const_reference operator[] (unsigned pos) const
-        {return *(start+pos);}
-    reference front()
-        {if(empty()) throw("out-of-range"); return *start;}
-    const_reference front() const
-        {if(empty()) throw("out-of-range"); return *start;}
-    reference back()
-        {if(empty()) throw("out-of-range"); return *(finish-1);}
-    const_reference back() const
-        {if(empty()) throw("out-of-range"); return *(finish-1);}
-
-    // Iterators
-    iterator begin()
-        {return start;}
-    const_iterator begin() const
-        {return start;}
-    iterator end()
-        {return finish;}
-    const_iterator end() const
-        {return finish;}
-
-    // Capacity
-    bool empty() const
-        {return start==finish ? 1 : 0;}
-    unsigned size() const
-        {return finish-start;}
-    unsigned capacity() const
-        {return end_of_storage-start;}
-    void reserve(unsigned new_capacity)
-        {if(new_capacity<=capacity()) return;
-         else {Vector<T> temp(new_capacity); temp=*this; temp.swap(*this);}}
-    void shrink_to_fit()
-        {Vector<T>(*this).swap(*this);}
-
-    // Modifiers
-    void clear()
-        {finish=start;}
-    void insert(iterator, const T&);
-    void insert(iterator, unsigned, const T&);
-    void erase(iterator);
-    void erase(iterator, iterator);
-    void push_back(const T&);
-    void pop_back();
-    void resize(unsigned);
-    void swap(Vector<T>&);
 };
 
-// non-member functions
-// overloaded operators declaration
 template<typename T>
 bool operator==(const Vector<T>& lhs, const Vector<T>& rhs)
 {
-    if(lhs.size()!=rhs.size())
-        return 0;
-    else
-        for(int i=0; i<lhs.size()&&i<rhs.size(); i++)
-            if(lhs[i]!=rhs[i])
-                return 0;
-    return 1;
+    return lhs.size()==rhs.size() && std::equal(lhs.begin(), lhs.end(), rhs.begin());
 }
 
 template<typename T>
@@ -105,39 +149,51 @@ bool operator!=(const Vector<T>& lhs, const Vector<T>& rhs)
     return !(lhs==rhs);
 }
 
-// member functions
-// ctor with no initial menber
 template <typename T>
 inline Vector <T>::Vector()
 : start(nullptr), finish(nullptr), end_of_storage(nullptr) {}
 
-// ctor with specific size
 template <typename T>
-inline Vector<T>::Vector(int n)
-: start(new T[n]()), finish(start+n), end_of_storage(finish) {}
+inline Vector<T>::Vector(size_type n)
+: start(new T[n]()), finish(start+n), end_of_storage(finish) 
+{
+    std::uninitialized_fill_n(start, n, T());
+}
 
 template <typename T>
-inline Vector<T>::Vector(int n, const T& value)
+inline Vector<T>::Vector(size_type n, const_reference value)
 : start(new T[n]), finish(start+n), end_of_storage(finish) 
 {
-    for(T* p=start; p!=finish; p++)
-        *p=value; 
+    std::uninitialized_fill_n(start, n, value);
 }
 
 template <typename T>
 inline Vector<T>::Vector(const Vector<T>& rhs)
 : start(new T[rhs.size()]), finish(start+rhs.size()), end_of_storage(finish)
 {
-    for(int i=0;i<rhs.size();i++)
-        *(start+i)=rhs[i]; 
+    std::uninitialized_copy(rhs.begin(), rhs.end(), start);
 }
 
 template <typename T>
-inline Vector<T>::Vector(T* first, T* last)
+template <typename InputIt>
+inline Vector<T>::Vector(InputIt first, InputIt last)
 : start(new T[last-first]), finish(start+(last-first)), end_of_storage(finish)
 {
-    for(int i=0; i<last-first; i++)
-        *(start+i)=*(first+i);
+    std::uninitialized_copy(first, last, start);
+}
+
+template <typename T>
+inline Vector<T>::Vector(Vector<T>&& rhs)
+: start(rhs.start), finish(rhs.finish), end_of_storage(rhs.end_of_storage)
+{
+    rhs.start=rhs.finish=rhs.end_of_storage=nullptr;
+}
+
+template <typename T>
+inline Vector<T>::Vector(std::initializer_list<T> il)
+: start(new T[il.size()]), finish(start+il.size()), end_of_storage(finish)
+{
+    std::uninitialized_copy(il.begin(), il.end(), start);
 }
 
 template<typename T>
@@ -145,17 +201,30 @@ inline Vector<T>& Vector<T>::operator=(const Vector<T>& rhs)
 {
     if(this!=&rhs){
         if(capacity()>=rhs.size()){
-            for(int i=0; i<rhs.size(); i++)
+            for(size_type i=0; i<rhs.size(); i++)
                 *(start+i)=rhs[i];
             finish=start+rhs.size();
         }else{
             delete[] start;
             start=new T[rhs.size()];
-            for(int i=0; i<rhs.size(); i++)
+            for(size_type i=0; i<rhs.size(); i++)
                 *(start+i)=rhs[i];
             finish=start+rhs.size();
             end_of_storage=start+rhs.size();
         }
+    }
+    return *this;
+}
+
+template <typename T>
+inline Vector<T>& Vector<T>::operator=(Vector<T>&& rhs)
+{
+    if(this!=&rhs){
+        delete[] start;
+        start=rhs.start;
+        finish=rhs.finish;
+        end_of_storage=rhs.end_of_storage;
+        rhs.start=rhs.finish=rhs.end_of_storage=nullptr;
     }
     return *this;
 }
@@ -167,104 +236,145 @@ inline Vector<T>::~Vector()
 }
 
 template<typename T>
-inline void Vector<T>::insert(T* pos, const T& value)
+inline auto Vector<T>::insert(const_iterator pos, const_reference value) -> iterator
 {
-    insert(pos,1,value);
+    return insert(pos,1,value);
 }
 
 template<typename T>
-inline void Vector<T>::insert(T* pos, unsigned num, const T& value)
+inline auto Vector<T>::insert(const_iterator pos, value_type&& value) -> iterator
 {
-    int offset=pos-start;
-    int move=finish-pos+1;
-    at(offset);          // check the bound
+    return insert(pos,1,std::move(value));
+}
+
+template<typename T>
+inline auto Vector<T>::insert(const_iterator pos, size_type num, const_reference value) -> iterator
+{
+    assert(pos<=finish && "Vector::insert(iterator, size_type, const_reference) called with a non-dereferenceable iterator");
+    size_type offset=pos-start;
     if(size()+num>capacity())
         reserve(size()+num);
+    std::move(start+offset, finish, start+offset+num);
+    std::uninitialized_fill_n(start+offset, num, value);
     finish+=num;
-    for(int i=1; i<=move; i++)
-        *(finish-i)=*(finish-num-i);
-    for(T* p=start+offset; p<start+offset+num; p++)
-        *p=value; 
+    return start+offset;
 }
 
 template<typename T>
-inline void Vector<T>::erase(T* pos)
+template<typename InputIt>
+inline auto Vector<T>::insert(const_iterator pos, InputIt first, InputIt last) -> iterator
 {
-    if(pos>=finish || pos<start)
-        throw("out-of-range");
-    else{
-        for(T* p=pos; p<finish-1; p++)
-            *p=*(p+1);
-        --finish;
-    }
+    assert(pos<=finish && "Vector::insert(iterator, iterator, iterator) called with a non-dereferenceable iterator");
+    size_type offset=pos-start;
+    size_type num=last-first;
+    if(size()+num>capacity())
+        reserve(size()+num);
+    std::move(start+offset, finish, start+offset+num);
+    std::uninitialized_copy(first, last, start+offset);
+    finish+=num;
+    return start+offset;
 }
 
 template<typename T>
-inline void Vector<T>::erase(T* first, T* last)
+inline auto Vector<T>::insert(const_iterator pos, std::initializer_list<T> il) -> iterator
 {
-    if(first>last)
-        throw("range-fault");
-    else if(first<start || last>finish)
-        throw("out-of-range");
-    else{
-        int new_size = size() - (last - first);
-        for (int i = 0; i < finish-last; i++)
-            *(first+i)=*(last+i);
-        finish = start + new_size;
-    }
+    assert(pos<=finish && "Vector::insert(iterator, std::initializer_list) called with a non-dereferenceable iterator");
+    size_type offset=pos-start;
+    size_type num=il.size();
+    if(size()+num>capacity())
+        reserve(size()+num);
+    std::move(start+offset, finish, start+offset+num);
+    std::uninitialized_copy(il.begin(), il.end(), start+offset);
+    finish+=num;
+    return start+offset;
+}
+
+template<typename T>
+inline auto Vector<T>::erase(const_iterator pos) -> iterator
+{
+    return erase(pos, pos+1);
+}
+
+template<typename T>
+inline auto Vector<T>::erase(const_iterator first, const_iterator last) -> iterator
+{
+    assert(first<=last && "Vector::erase(const_iterator, const_iterator) called with invalid range");
+
+    size_type offset=first-start;
+    std::destroy(first, last);
+    std::move(const_cast<iterator>(last), finish, const_cast<iterator>(first));
+    finish=finish-(last-first);
+    return start+offset;
 } 
 
-// if needed, reallocate 2 times
 template<typename T>
-inline void Vector<T>::push_back(const T& new_element)
+inline void Vector<T>::push_back(const_reference new_element)
 {
     if(finish==end_of_storage){
-        int new_size= size() ? 2*size() : 1;
-        Vector temp;
-        temp.reserve(new_size);
-        temp=*this;
-        temp.swap(*this);
+        size_type new_size= size() ? 2*size() : 1;
+        reserve(new_size);
     }
     *finish++=new_element;
 }
 
 template<typename T>
+inline void Vector<T>::push_back(value_type&& new_element)
+{
+    if(finish==end_of_storage){
+        size_type new_size= size() ? 2*size() : 1;
+        reserve(new_size);
+    }
+    *finish++=std::move(new_element);
+}
+
+template<typename T>
 inline void Vector<T>::pop_back()
 {
-    *(finish-1)=T();
+    assert(!empty() && "Vector::pop_back called on an empty vector");
     finish--;
 }
 
 template<typename T>
-inline void Vector<T>::resize(unsigned new_size)
+inline void Vector<T>::clear()
 {
-    if(new_size>=capacity()){
-        reserve(new_size);
-        for(T* p=finish; p<=end_of_storage; p++)
-            *p=T();
-        finish=start+new_size;
-    }
-    else{
-        Vector<T> temp(new_size);
-        for(int i=0; i<new_size; i++)
-            temp[i]=*(start+i);
-        temp.swap(*this);
-    }
+    std::destroy(start, finish);
+    finish=start;
 }
 
-// swap(only swap pointer)
 template<typename T>
 inline void Vector<T>::swap(Vector<T>& rhs)
 {
-    T* temp;
-    temp=rhs.start;
-    rhs.start=start;
-    start=temp;
-    temp=rhs.finish;
-    rhs.finish=finish;
-    finish=temp;
-    temp=rhs.end_of_storage; 
-    rhs.end_of_storage=end_of_storage;
-    end_of_storage=temp;
+    std::swap(start, rhs.start);
+    std::swap(finish, rhs.finish);
+    std::swap(end_of_storage, rhs.end_of_storage);
 }
 
+template<typename T>
+inline void Vector<T>::resize(size_type new_size)
+{
+    if(new_size>=capacity()){
+        reserve(new_size);
+        finish=start+new_size;
+    }else
+        finish=start+new_size;
+}
+
+template<typename T>
+inline void Vector<T>::reserve(size_type new_capacity)
+{
+    if(new_capacity>capacity()) {
+        Vector temp(new_capacity);
+        temp.finish=temp.start+size();
+        temp.swap(*this);
+        std::move(temp.start, temp.finish, start);
+    }
+}
+
+template<typename T>
+inline void Vector<T>::shrink_to_fit()
+{
+    if(size()<capacity()) {
+        Vector temp(*this);
+        temp.swap(*this);
+    }
+}

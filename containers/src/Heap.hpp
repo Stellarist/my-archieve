@@ -124,4 +124,3 @@ std::ostream& operator<<(std::ostream& out, const MaxHeap<T>& rhs)
     out<<std::endl;
     return out;
 }
-
