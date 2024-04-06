@@ -4,16 +4,18 @@ project(canvas)
 
 set(CMAKE_CXX_STANDARD 23)
 
-include_directories(dependencies)
+find_package(glad CONFIG REQUIRED)
+find_package(imgui CONFIG REQUIRED)
+find_package(glfw3 CONFIG REQUIRED)
 
-aux_source_directory(src SRC_LIST)
-add_executable(canvas ${SRC_LIST})
+file(GLOB SOURCES src/*.cpp)
+add_executable(canvas ${SOURCES})
 
 target_compile_definitions(canvas PRIVATE
     PROJECT_PATH="${CMAKE_SOURCE_DIR}")
 
 target_link_libraries(canvas
-    ${CMAKE_SOURCE_DIR}/dependencies/glad/glad.lib
-    ${CMAKE_SOURCE_DIR}/dependencies/imgui/imgui.lib
-    glfw3
+    glad::glad
+    imgui::imgui
+    glfw
 )
