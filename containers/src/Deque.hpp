@@ -1,151 +1,205 @@
 #pragma once
 
+#include <cstddef>
+#include <cassert>
+#include <stdexcept>
+#include <algorithm>
+#include <deque>
+
+template <typename T> class Deque;
+template <typename T> class DequeIterator;
+
 template <typename T>
-class Deque{
-private:
-    using iterator=T*;
-    using const_iterator=const T*;
-    using reference=T&;
-    using const_reference=const T&;
-private:
-    iterator begin_of_storage;
-    iterator end_of_storage;
-    iterator start;
-    iterator finish;
-    void reallocate();
+class DequeIterator {
 public:
-    Deque()
-        : begin_of_storage(nullptr), end_of_storage(nullptr), start(nullptr), finish(nullptr) {}
-    Deque(const Deque&);
-    ~Deque()
-        {delete[] begin_of_storage;}
-    Deque& operator=(const Deque<T>&);
+    using iterator_category = random_access_iterator_tag;
+    using value_type        = T;
+    using size_type         = size_t;
+    using difference_type   = ptrdiff_t;
+    using pointer           = value_type*;
+    using reference         = value_type&;
+    using self              = DequeIterator<T>;
+    using map_pointer       = pointer*;
 
-    iterators
-    iterator begin()
-        {return start;}
-    const_iterator begin() const
-        {return start;}
-    iterator end()
-        {return finish;}
-    const_iterator end() const
-        {return finish;}
+    DequeIterator(): ptr{}, map_pointer{} {}
+    DequeIterator(map_pointer mp, pointer p): map_pointer(mp), ptr(p) {}
+    DequeIterator(const DequeIterator& rhs): ptr(rhs.ptr), map_pointer(rhs.map_pointer) {}
+    DequeIterator& operator=(const DequeIterator& rhs)=default;
 
-    element access
-    reference operator[](int pos)                           no bound checked
-        {return *(start+pos);} 
-    const_reference operator[](int pos) const       no bound checked
-        {return *(start+pos);} 
-    reference front()
-        {return *start;}
-    const_reference front() const
-        {return *start;}
-    reference back()
-        {return *finish;}
-    const_reference back() const
-        {return *finish;}
+    reference operator*() const
+        {return *ptr;}
 
-    capacity
-    constexpr bool empty() const
-        {return start==finish;}
-    constexpr int size() const
-        {return finish-start;}
-    constexpr int capacity() const
-        {return end_of_storage-begin_of_storage;}
+    pointer operator->() const
+        {return ptr;}
     
-    modifiers
-    void clear()
-        {finish=start;}
-    void push_back(const T&);
-    void pop_back();
-    void push_front(const T&);
-    void pop_front();
-    void swap(Deque<T>&); 
+    self& operator++() {
+        if(++ptr - *map_pointer = block_size) {
+            ++map_pointer;
+            ptr = *map_pointer;
+        }
+        return *this;
+    }
+        
+    self& operator++(int) {
+        self temp = *this;
+        ++*this;
+        return temp;
+    }
+
+    self& operator--() {
+        if(ptr == *map_pointer) {
+            --map_pointer;
+            ptr = *map_pointer + block_size;
+        }
+        --ptr;
+        return *this;
+    }
+
+    self& operator--(int) {
+        self temp = *this;
+        --*this;
+        return temp;
+    }
+
+    self& operator+=(difference_type n) {
+        if(n != 0){
+            n += ptr-*map_pointer;
+            if(n>0){
+                map_pointer += n/block_size;
+                ptr = *map_pointer+n%block_size
+            }else{
+                difference_type z = block_size-1-n;
+                map_pointer -= z/block_size;
+                ptr = *map_pointer+(block_size-1-z%block_size);
+            }
+            return *this;
+        }
+    }
+
+    self& operator-=(difference_type n) {
+        return *this += -n;
+    }
+
+    self operator+(difference_type n) const {
+        self temp(*this);
+        return temp += n;
+    }
+
+    self operator-(difference_type n) const {
+        self temp(*this);
+        return temp -= n;
+    }
+
+    reference operator[](difference_type n) const {
+        return *(*this + n);
+    }
+
+    bool operator==(const self& rhs) const {
+        return ptr == rhs.ptr;
+    }
+
+    bool operator!=(const self& rhs) const {
+        !(*this == rhs);
+    }
+
+    bool operator<(const self& rhs) const {
+        return map_pointer<rhs.map_pointer || (map_pointer==rhs.map_pointer && ptr<rhs.ptr);
+    }
+
+    bool operator>(const self& rhs) const {
+        return rhs < *this;
+    }
+
+    bool operator<=(const self& rhs) const {
+        return !(*this > rhs);
+    }
+
+    bool operator>=(const self& rhs) const {
+        return !(*this < rhs);
+    }
+
+private:
+    pointer     ptr;
+    map_pointer map_ptr;
+
+    static const size_type block_size = Deque<T>::block_size;
+
+friend class Deque<T>;
 };
 
 template <typename T>
-void Deque<T>::reallocate()
-{
-    Deque<T> temp;
-    int new_capacity=size()>2 ? 2*size() : 4;
-    temp.begin_of_storage=new T[new_capacity];
-    temp.end_of_storage=temp.begin_of_storage+new_capacity;
-    temp.start=temp.begin_of_storage+(new_capacity-size())/2;
-    temp.finish=temp.start+size();
-    for(iterator it=temp.begin(), it2=begin(); it2!=end(); ++it, ++it2)
-        *it=*it2;
-    swap(temp);
-}
+class Deque {
+public:
+    using value_type             = T;
+    using size_type              = size_t;
+    using difference_type        = ptrdiff_t;
+    using pointer                = value_type*;
+    using const_pointer          = const value_type*;
+    using reference              = value_type&;
+    using const_reference        = const value_type&;
+    using iterator               = DequeIterator<T>;
+    using const_iterator         = const DequeIterator<T>;
+    using reverse_iterator       = std::reverse_iterator<iterator>;
+    using const_reverse_iterator = std::reverse_iterator<const_iterator>;
+    using map_pointer            = pointer*;
 
-template <typename T>
-Deque<T>::Deque(const Deque<T>& rhs)
-: begin_of_storage(new T[rhs.capacity()]), end_of_storage(begin_of_storage+rhs.capacity()),
-    start(begin_of_storage+(rhs.start-rhs.begin_of_storage)), finish(start+rhs.size()) 
-{
-    for(iterator it=begin(), it2=rhs.begin(); it2!=rhs.end(); ++it, ++it2)
-        *it=*it2;
-}
+    Deque();
+    Deque(size_type);
+    Deque(size_type, const T&);
+    template <typename InputIterator>
+    Deque(InputIterator, InputIterator);
+    Deque(std::initializer_list<T>);
+    Deque(const Deque&);
+    Deque(Deque&&);
+    Deque& operator=(const Deque<T>&);
+    Deque& operator=(Deque<T>&&);
+    ~Deque();
 
-template <typename T>
-auto Deque<T>::operator=(const Deque<T>& rhs) -> Deque&
-{
-    if(this!=&rhs){
-        delete[] begin_of_storage;
-        begin_of_storage=new T[rhs.capacity];
-        end_of_storage=begin_of_storage+rhs.capacity();
-        start=begin_of_storage+(rhs.start-rhs.begin_of_storage);
-        finish=start+rhs.size();
-        for(iterator it=begin(), it2=rhs.begin(); it2!=rhs.end(); ++it, ++it2)
-            *it=*it2;
-    }
-    return *this;
-}
+    reference at(size_type pos);
+    const_reference at(size_type pos) const;
+    reference operator[](int pos);
+    const_reference operator[](int pos) const;
+    reference front();
+    const_reference front() const;
+    reference back();
+    const_reference back() const;
+    iterator begin();
+    const_iterator begin() const;
+    const_iterator cbegin() const;
+    iterator end();
+    const_iterator end() const;
+    const_iterator cend() const;
+    reverse_iterator rbegin();
+    const_reverse_iterator rbegin() const;
+    const_reverse_iterator crbegin() const;
+    bool empty() const;
+    size_type size() const;
+    
+    void clear();
+    iterator insert(const_iterator, const T&);
+    iterator insert(const_iterator, T&&);
+    iterator insert(const_iterator, size_type, const T&);
+    template <typename InputIterator>
+    iterator insert(const_iterator, InputIterator, InputIterator);
+    iterator insert(const_iterator, std::initializer_list<T>);
+    iterator erase(const_iterator);
+    iterator erase(const_iterator, const_iterator);
+    void push_back(const T&);
+    void push_back(T&&);
+    void pop_back();
+    void push_front(const T&);
+    void push_front(T&&);
+    void pop_front();
+    void resize(size_type);
+    void resize(size_type, const T&);
+    void swap(Deque<T>&); 
 
-template <typename T>
-void Deque<T>::push_back(const T& content)
-{
-    if(finish==end_of_storage)
-        reallocate();
-    *finish++=content;
-}
+private:
+    iterator start;
+    iterator finish;
+    map_pointer map;
+    
+    const static size_type block_size = 8;
 
-template <typename T>
-void Deque<T>::pop_back()
-{
-    if(empty())
-        throw("deque-empty");
-    else
-        finish--;
-}
-
-template <typename T>
-void Deque<T>::push_front(const T& content)
-{
-    if(start==begin_of_storage)
-        reallocate();
-    *--start=content;
-}
-
-template <typename T>
-void Deque<T>::pop_front()
-{
-    if(empty())
-        throw("deque-empty");
-    else
-        ++start;
-}
-
-template <typename T>
-void Deque<T>::swap(Deque<T>& rhs)
-{
-    auto swap=[] (T*& a, T*& b) -> void {
-        T* temp=b;
-        b=a;
-        a=temp;
-    };
-    swap(start, rhs.start);
-    swap(finish, rhs.finish);
-    swap(begin_of_storage, rhs.begin_of_storage);
-    swap(end_of_storage, rhs.end_of_storage);
-}
-
+    void reallocate();
+};
