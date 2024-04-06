@@ -10,7 +10,6 @@ public class MyPlayerHealth : MonoBehaviour
         traps_layer = LayerMask.NameToLayer("Traps");
     }
 
-    // override
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.layer == traps_layer)

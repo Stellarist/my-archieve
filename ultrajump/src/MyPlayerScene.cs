@@ -12,7 +12,6 @@ public class MyPlayerScene : MonoBehaviour
         GameManager.RegisterSceneFader(this);
     }
 
-    // ³¡¾°ÏûÊ§¶¯»­
     public void FadeOut()
     {
         anim.SetTrigger(fader_id);

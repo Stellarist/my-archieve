@@ -10,7 +10,6 @@ Director Window::director;
 
 Window::Window()
 {
-    // initialize glfw
     glfwInit();
     window=glfwCreateWindow(1920, 1080, "Canvas", nullptr, nullptr);
     if(window==nullptr){
@@ -23,14 +22,12 @@ Window::Window()
     glfwMakeContextCurrent(window);
     director.resize(width, height);
 
-    // initialize glad
     if(!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)){
         std::cout << "Failed to initialize GLAD" << std::endl;
         exit(-1);
     }
     glViewport(0, 0, width, height);
 
-    // set callback
     glfwSwapInterval(1);
     glfwSetFramebufferSizeCallback(this->window, frameBufferSizeCallback);
     glfwSetMouseButtonCallback(this->window, mouseButtonCallback);
@@ -46,7 +43,6 @@ Window::~Window()
 
     deleteGlShader();
 
-    // destroy glfw window
     glfwDestroyWindow(window);
     glfwTerminate();
 }
@@ -86,7 +82,6 @@ void Window::initialize()
         -1.0f,  1.0f,  0.0f,  0.0f, 1.0f,
     };
 
-    // set vao and vbo
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
 
@@ -99,7 +94,6 @@ void Window::initialize()
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5*sizeof(float), (void*)(3*sizeof(float)));
     glEnableVertexAttribArray(1);
 
-    // set texture
     glGenTextures(1, &window_texture);
     glBindTexture(GL_TEXTURE_2D, window_texture);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);

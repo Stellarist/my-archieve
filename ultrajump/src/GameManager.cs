@@ -40,13 +40,11 @@ public class GameManager : MonoBehaviour
         MyPlayerUI.UpdateDeathUI(dead_times);
     }
 
-    // 注册场景
     public static void RegisterSceneFader(MyPlayerScene fader)
     {
         instance.fader = fader;
     }
 
-    // 注册宝珠
     public static void RegisterOrb(MyPlayerOrb orb)
     {
         if (instance == null)
@@ -56,13 +54,11 @@ public class GameManager : MonoBehaviour
         MyPlayerUI.UpdateOrbUI(instance.orbs.Count);
     }
 
-    // 注册门
     public static void RegisterDoor(MyPlayerDoor door)
     {
         instance.locked_door = door;
     }
 
-    // 处理角色胜利机制
     public static void PlayerWon()
     {
         instance.is_over = true;
@@ -70,7 +66,6 @@ public class GameManager : MonoBehaviour
         MyPlayerAudio.PlayWinAudio();
     }
 
-    // 处理角色死亡机制
     public static void PlayerDied()
     {
         instance.fader.FadeOut();
@@ -79,7 +74,6 @@ public class GameManager : MonoBehaviour
         instance.Invoke("RestartScene", 1.5f);
     }
 
-    // 处理角色获得宝珠机制
     public static void PlayerGrabbedOrb(MyPlayerOrb orb)
     {
         if (!instance.orbs.Contains(orb))
@@ -92,14 +86,12 @@ public class GameManager : MonoBehaviour
         MyPlayerUI.UpdateOrbUI(instance.orbs.Count);
     }
 
-    // 重新显示场景
     private void RestartScene()
     {
         instance.orbs.Clear();
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex); 
     }
 
-    // 游戏结束
     public static bool GameIsOver()
     {
         return instance.is_over;

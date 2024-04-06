@@ -6,7 +6,6 @@ public class MyPlayerAnimation : MonoBehaviour
     MyPlayerMovement move;
     Rigidbody2D rigid_body;
 
-    // 动画参数
     int ground_id;
     int hanging_id;
     int crouch_id;
@@ -17,11 +16,9 @@ public class MyPlayerAnimation : MonoBehaviour
     {
         anim=GetComponent<Animator>(); 
 
-        // 获得父组件的参数
         move=GetComponentInParent<MyPlayerMovement>();
         rigid_body=GetComponentInParent<Rigidbody2D>();
 
-        // 获得动画编号
         ground_id = Animator.StringToHash("isOnGround");
         hanging_id = Animator.StringToHash("isHanging");
         crouch_id = Animator.StringToHash("isCrouching");
@@ -38,13 +35,11 @@ public class MyPlayerAnimation : MonoBehaviour
         anim.SetFloat(fall_id, rigid_body.velocity.y);
     }
 
-    // 走路声音
     public void StepAudio()
     {
         MyPlayerAudio.PlayFootStepAudio();
     }
 
-    // 下蹲走路声音
     public void CrouchStepAudio()
     {
         MyPlayerAudio.PlayCrouchFootstepAudio();

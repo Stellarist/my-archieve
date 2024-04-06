@@ -44,7 +44,6 @@ void Rasterizer::resize(int width, int height)
 
 void Rasterizer::drawPixel(const point_t& point, const color_t& color, int depth)
 {
-    // set pixel color
     int x=point.x(), y=point.y();
     if(x>=width || y>=height || x<0 || y<0)
         return;
@@ -69,7 +68,6 @@ void Rasterizer::drawPixels(const point_t& point, const color_t& color, int pixe
     if(point.x()>=width || point.y()>=height || point.x()<0 || point.y()<0)
         return;
 
-    // caculate the pixel ranges
     int index, x=point.x(), y=point.y();
     int min_pixel=is_steep ? x-(int)(pixel_width/2) : y-(int)(pixel_width/2);
     int max_pixel=min_pixel+pixel_width;
@@ -84,7 +82,6 @@ void Rasterizer::drawPixels(const point_t& point, const color_t& color, int pixe
             max_pixel=width-1;
 
 
-    // set pixel color
     if(!is_steep){
         index=min_pixel*width+x;
         for(int i=min_pixel; i<max_pixel; i++){
@@ -102,7 +99,6 @@ void Rasterizer::drawPixels(const point_t& point, const color_t& color, int pixe
 
 void Rasterizer::drawCirclePixels(int x, int y, int x_axis, int y_axis, const color_t& color, int pixel_width)
 {
-    // draw pixel in 8 directions
     drawPixels({x_axis+x, y_axis+y, 0.0f, 1.0f}, color, pixel_width, 0, false);
     drawPixels({x_axis-x, y_axis+y, 0.0f, 1.0f}, color, pixel_width, 0, false);
     drawPixels({x_axis+x, y_axis-y, 0.0f, 1.0f}, color, pixel_width, 0, false);

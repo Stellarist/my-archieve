@@ -3,7 +3,6 @@
 Widget::Widget(GLFWwindow* window, Director& director)
 : director(director)
 {
-    // initialize imgui
     ImGui::CreateContext();
     ImGui::StyleColorsDark();
     ImGui_ImplGlfw_InitForOpenGL(window, true);
@@ -12,7 +11,6 @@ Widget::Widget(GLFWwindow* window, Director& director)
 
 Widget::~Widget()
 {
-    // destroy imgui window
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();

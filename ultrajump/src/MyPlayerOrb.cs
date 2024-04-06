@@ -9,11 +9,9 @@ public class MyPlayerOrb : MonoBehaviour
     {
         player = LayerMask.NameToLayer("Player");
 
-        // ×¢²á±¦Öé
         GameManager.RegisterOrb(this);
     }
 
-    // override
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if(collision.gameObject.layer==player)

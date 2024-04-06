@@ -39,7 +39,6 @@ public class MyPlayerAudio : MonoBehaviour
         }
         current_audio = this;
 
-        // Ìí¼ÓÉùÒô×é¼ş
         ambient_source=gameObject.AddComponent<AudioSource>();
         music_source=gameObject.AddComponent<AudioSource>();
         fx_source=gameObject.AddComponent<AudioSource>();

@@ -184,7 +184,6 @@ public:
         {for(int i=0; i<num; i++) matrix[i]=rhs.matrix[i];}
     ArraySparseMatrix operator=(const ArraySparseMatrix& rhs);
 
-    // elements access
     int getRows()
         {return rows;}
     int getCols()
@@ -194,7 +193,6 @@ public:
     T getElem(int r, int c);
     void setElem(int r, int c, const T& v);
 
-    // modifiers
     ArraySparseMatrix simpleTranspose();
     ArraySparseMatrix fastTranspose();
 
@@ -239,7 +237,7 @@ void ArraySparseMatrix<T>::setElem(int r, int c, const T& v)
             matrix[i].value=v;
             return;
         }
-    // expand capacity if needed
+
     if(num==capacity){
         int new_capacity=capacity ? 2*capacity : 1;
         TriPair<T>* temp=new TriPair<T>[new_capacity];
@@ -250,7 +248,7 @@ void ArraySparseMatrix<T>::setElem(int r, int c, const T& v)
         temp=nullptr;
         capacity=new_capacity;
     }
-    // insert sort
+    
     if(!num){
         matrix[0].row=r;
         matrix[0].col=c;

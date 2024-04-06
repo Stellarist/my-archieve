@@ -21,7 +21,7 @@ public:
         {delete[] begin_of_storage;}
     Deque& operator=(const Deque<T>&);
 
-    // iterators
+    iterators
     iterator begin()
         {return start;}
     const_iterator begin() const
@@ -31,10 +31,10 @@ public:
     const_iterator end() const
         {return finish;}
 
-    // element access
-    reference operator[](int pos)                           // no bound checked
+    element access
+    reference operator[](int pos)                           no bound checked
         {return *(start+pos);} 
-    const_reference operator[](int pos) const       // no bound checked
+    const_reference operator[](int pos) const       no bound checked
         {return *(start+pos);} 
     reference front()
         {return *start;}
@@ -45,7 +45,7 @@ public:
     const_reference back() const
         {return *finish;}
 
-    // capacity
+    capacity
     constexpr bool empty() const
         {return start==finish;}
     constexpr int size() const
@@ -53,7 +53,7 @@ public:
     constexpr int capacity() const
         {return end_of_storage-begin_of_storage;}
     
-    // modifiers
+    modifiers
     void clear()
         {finish=start;}
     void push_back(const T&);

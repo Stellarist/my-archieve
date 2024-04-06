@@ -99,7 +99,7 @@ public class ChatController {
             String text = message.object.toString();
             text = insertLineBreaks(text, 30);
             Text second_line = new Text(text);
-            second_line.setFont(Font.font("Arial", 18)); // 设置字体大小
+            second_line.setFont(Font.font("Arial", 18));
             second_line.setFill(Color.BLACK);
 
             message_label.setGraphic(new VBox(first_line, second_line));

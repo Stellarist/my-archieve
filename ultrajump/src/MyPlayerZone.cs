@@ -9,7 +9,6 @@ public class MyPlayerZone : MonoBehaviour
         player_layer = LayerMask.NameToLayer("Player");
     }
 
-    // implement abstracts
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.layer == player_layer)
