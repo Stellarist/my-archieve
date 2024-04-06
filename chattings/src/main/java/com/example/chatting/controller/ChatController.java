@@ -65,10 +65,30 @@ public class ChatController {
 
         if (is_self) {
             message_flow.setAlignment(Pos.CENTER_RIGHT);
-            message_label.getStyleClass().add("self-message");
+            message_label.setStyle(
+                "-fx-font-size: 16px; " +
+                "-fx-background-color: #0078d4; " +
+                "-fx-text-fill: #FFFFFF; " +
+                "-fx-padding: 5px 10px; " +
+                "-fx-margin: 10px 20px 10px 20px; " +
+                "-fx-border-radius: 10px 10px 0 10px; " +
+                "-fx-background-radius: 10px 10px 0 10px; " +
+                "-fx-border-color: #0078d4; " +
+                "-fx-border-width: 2px;"
+            );
         } else {
             message_flow.setAlignment(Pos.CENTER_LEFT);
-            message_label.getStyleClass().add("other-message");
+            message_label..setStyle(
+                "-fx-font-size: 16px; " +
+                "-fx-background-color: #a8a8a8; " +
+                "-fx-text-fill: #000000; " +
+                "-fx-padding: 5px 10px; " +
+                "-fx-margin: 10px 20px 10px 20px; " +
+                "-fx-border-radius: 10px 10px 10px 0; " +
+                "-fx-background-radius: 10px 10px 10px 0; " +
+                "-fx-border-color: #a8a8a8; " +
+                "-fx-border-width: 2px;"
+            );
         }
 
         Text first_line = new Text(message.user_info.getUsername());
