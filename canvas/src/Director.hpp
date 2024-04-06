@@ -1,8 +1,3 @@
-/**
-* director
-* a state machine to control the drawing picture per frame
-*/
-
 #pragma once
 
 #include <array>

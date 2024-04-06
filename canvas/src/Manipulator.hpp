@@ -1,10 +1,3 @@
-/**
-* manipulator
-* lab 2 content
-*/
-
-#pragma once
-
 #include "Rasterizer.hpp"
 
 #include "type.hpp"

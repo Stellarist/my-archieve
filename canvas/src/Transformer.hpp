@@ -1,8 +1,3 @@
-/**
-* transformer
-* lab 3 content
-*/
-
 #pragma once
 
 #include "Rasterizer.hpp"

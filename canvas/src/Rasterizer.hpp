@@ -1,9 +1,3 @@
-/**
-* rasterizer
-* lab 1 content
-* double buffering to record
-*/
-
 #pragma once
 
 #include <vector>

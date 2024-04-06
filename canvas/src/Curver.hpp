@@ -1,8 +1,3 @@
-/**
-* curver
-* lab 4 content
-*/
-
 #pragma once
 
 #include "Rasterizer.hpp"

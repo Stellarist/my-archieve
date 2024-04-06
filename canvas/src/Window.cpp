@@ -1,7 +1,6 @@
 #include "Window.hpp"
 
 #include <iostream>
-#include <fstream>
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -38,7 +37,7 @@ Window::Window()
     glfwSetCursorPosCallback(this->window, cursorPosCallback);
 
     widget=new Widget(window, director);
-    createGlShader(PROJECT_PATH "/shaders/main.vert", PROJECT_PATH "/shaders/main.frag");
+    createGlShader();
 }
 
 Window::~Window()
@@ -166,34 +165,34 @@ void Window::cursorPosCallback(GLFWwindow* window, double xpos, double ypos) {
     }
 }
 
-void Window::createGlShader(const char* vertex_path, const char* fragment_path)
+void Window::createGlShader()
 {
-    // 1. retrieve the vertex/fragment source code from filePath
-    std::string vertex_source;
-    std::string fragment_source;
-    std::ifstream vertex_file;
-    std::ifstream fragment_file;
-    vertex_file.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-    fragment_file.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+    const char* vertex_code=R"(
+        #version 450 core
+        layout (location=0) in vec3 a_pos;
+        layout (location=1) in vec2 a_tex_coords;
+        out vec3 pos;
+        out vec2 tex_coords;
+        void main()
+        {
+            gl_Position=vec4(a_pos, 1.0);
+            pos=a_pos;
+            tex_coords=vec2(a_tex_coords.x, 1-a_tex_coords.y);
+        }
+    )"
 
-    try{
-        vertex_file.open(vertex_path);
-        fragment_file.open(fragment_path);
-        std::stringstream vertex_stream, fragment_stream;
-        vertex_stream<<vertex_file.rdbuf();
-        fragment_stream<<fragment_file.rdbuf();
-        vertex_file.close();
-        fragment_file.close();
-        vertex_source=vertex_stream.str();
-        fragment_source=fragment_stream.str();
-    }catch(std::ifstream::failure e){
-        std::cerr << "ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ" << std::endl;
-    }
+    const char* fragment_code=R"(
+        #version 450 core
+        in vec3 pos;
+        in vec2 tex_coords;
+        out vec4 frag_color;
+        uniform sampler2D texture0;
+        void main()
+        {
+            frag_color=texture(texture0, tex_coords);
+        }
+    )";
 
-    const char* vertex_code=vertex_source.c_str();
-    const char* fragment_code=fragment_source.c_str();
-
-    // 2. compile shaders
     unsigned int vertex, fragment;
     vertex=glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vertex, 1, &vertex_code, nullptr);    

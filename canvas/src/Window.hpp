@@ -1,8 +1,3 @@
-/**
-* Window
-* glfw windows
-*/
-
 #pragma once
 
 #include <glad/glad.h>
@@ -28,7 +23,7 @@ private:
     void initialize();
     void release();
 
-    void createGlShader(const char* vertex_path, const char* fragment_path);
+    void createGlShader();
     void checkGlShader(unsigned int shader, std::string type);
     void deleteGlShader();
 
